@@ -80,7 +80,7 @@ http.createServer(async(req,res)=>{
  await save();return json(res,200,{ok:true});
  } finally {busy=false;}
  }
- const paths={'/':'public/index.html','/app.js':'public/app.js','/style.css':'public/style.css','/analysis.js':'lib/analysis.js','/firebase.js':'public/firebase.js','/firebase-config.js':'public/firebase-config.js'};
+ const paths={'/':'public/index.html','/app.js':'public/app.js','/style.css':'public/style.css','/analysis.js':'lib/analysis.js','/runtime-config.js':'public/runtime-config.js','/hosted-api.js':'public/hosted-api.js','/hosted-settings.js':'public/hosted-settings.js','/demo.js':'lib/demo.js','/firebase.js':'public/firebase.js','/firebase-config.js':'public/firebase-config.js'};
  const path=paths[url.pathname];if(!path){res.writeHead(404);return res.end('Not found');}
  res.writeHead(200,{'Content-Type':path.endsWith('.html')?'text/html':path.endsWith('.css')?'text/css':'text/javascript','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.gstatic.com https://apis.google.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://repowise-neumont.firebaseapp.com; frame-src https://repowise-neumont.firebaseapp.com https://accounts.google.com; frame-ancestors 'none'"});res.end(await readFile(path));
  } catch(e){json(res,400,{error:e.message});}

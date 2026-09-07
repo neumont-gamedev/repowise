@@ -1,5 +1,7 @@
 # Repowise — GitHub Repository Intelligence
 
+Live app: https://repowise.web.app
+
 A local-first dashboard built from `AGENTS.md`, with a responsive dark interface and a working sample workspace.
 
 ## Run
@@ -45,8 +47,14 @@ Open **Settings & connection → Firebase cloud workspace**. Sign in with Google
 
 Firebase web configuration is public app metadata, not an administrator credential. Firebase CLI logs are excluded from Git. Auth sessions are limited to the browser session. Localhost and 127.0.0.1 are authorized sign-in domains.
 
-The app still runs on the local Node server. This integration does **not** deploy the dashboard or its GitHub API backend to Firebase Hosting. Production hosting requires an authenticated per-user backend rather than exposing the current local single-user API.
+The hosted app runs at https://repowise.web.app on Firebase Hosting. The Firebase project ID remains repowise-neumont; the public Hosting site is repowise. Hosted requests go directly to GitHub from the browser. Workspace data stays in browser local storage, with optional per-user Firebase annotation backups. Private access uses a token held in page memory only and cleared on reload. The local Node version remains available with npm start. Local and hosted workspaces are separate; import GitHub repositories and restore cloud annotations to move between them.
 
 Deploy configuration using `firebase deploy --only auth,firestore:rules --project repowise-neumont`.
 
 References: [Firebase web SDK](https://firebase.google.com/docs/web/alt-setup), [Google sign-in](https://firebase.google.com/docs/auth/web/google-signin), [Firestore rules](https://firebase.google.com/docs/firestore/security/rules-conditions).
+
+## Hosting deployment
+
+Run `npm test` to build and test both local and hosted workflows. Run `npm run deploy` to build and publish to the repowise Hosting site. Only dist/ is deployed; server credentials and .data/ are excluded. Browser storage has finite capacity; keep an exported backup and use Firebase annotation backups.
+
+The public URLs repowise.web.app and repowise.firebaseapp.com are authorized for Firebase Authentication and the restricted Firebase browser key. API restrictions remain limited to Authentication and Firestore.
