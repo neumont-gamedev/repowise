@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  match /users/{uid}/repositories/{repositoryId} {
+   allow read, delete: if request.auth != null && request.auth.uid == uid;
+   allow create, update: if request.auth != null && request.auth.uid == uid
+    && request.resource.data.keys().hasOnly(['fullName', 'annotations', 'updatedAt'])
+    && request.resource.data.fullName is string
+    && request.resource.data.fullName.size() < 250
+    && request.resource.data.annotations is map
+    && request.resource.data.annotations.keys().hasOnly(['notes', 'tags', 'review', 'favorite', 'status', 'projectType', 'cluster'])
+    && request.resource.data.annotations.notes is string
+    && request.resource.data.annotations.notes.size() <= 20000
+    && request.resource.data.annotations.tags is list
+    && request.resource.data.annotations.tags.size() <= 30
+    && request.resource.data.annotations.review is string
+    && request.resource.data.annotations.favorite is bool
+    && request.resource.data.updatedAt == request.time;
+  }
+ }
+}

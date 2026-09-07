@@ -34,3 +34,19 @@ Sync paginates repository metadata. Use **Analyze repository files** inside deta
 No AI service is configured. Summaries start from repository descriptions and analysis uses rules, labeled in the UI. Completeness is unknown. Similarity does not claim source-code ancestry. Detailed commit windows, branch/contributor/PR counts, deployments, model-generated summaries, and full semantic search are not implemented. Basic GitHub open-issue counts include pull requests and are labeled accordingly. Management executes only after confirmation; no background GitHub mutations occur.
 
 The local data file can contain private repository metadata and notes. `.env` and `.data` are gitignored. Demo operations are isolated from GitHub and modify only the current sample workspace.
+
+## Firebase integration
+
+Firebase project: **repowise-neumont**. Google sign-in is enabled and the default Firestore database is in **us-central1**. Rules are deployed from `firestore.rules`.
+
+Open **Settings & connection → Firebase cloud workspace**. Sign in with Google, import your GitHub repositories, and choose **Back up annotations**. Backups store repository names and notes/tags/favorites/review decisions under `users/{uid}/repositories/{repositoryId}`. Only the matching authenticated user can read or write them. Source code and GitHub tokens are not uploaded. Backups are explicit, not automatic.
+
+**Restore annotations** matches GitHub repository IDs and asks before replacing local annotations. Export first to preserve current state. Backups do not import missing repositories or delete old cloud entries. Import the GitHub account before restoring. Multi-batch failures can leave partial progress; retry to finish.
+
+Firebase web configuration is public app metadata, not an administrator credential. Firebase CLI logs are excluded from Git. Auth sessions are limited to the browser session. Localhost and 127.0.0.1 are authorized sign-in domains.
+
+The app still runs on the local Node server. This integration does **not** deploy the dashboard or its GitHub API backend to Firebase Hosting. Production hosting requires an authenticated per-user backend rather than exposing the current local single-user API.
+
+Deploy configuration using `firebase deploy --only auth,firestore:rules --project repowise-neumont`.
+
+References: [Firebase web SDK](https://firebase.google.com/docs/web/alt-setup), [Google sign-in](https://firebase.google.com/docs/auth/web/google-signin), [Firestore rules](https://firebase.google.com/docs/firestore/security/rules-conditions).
