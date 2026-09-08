@@ -61,18 +61,25 @@ export async function hostedApi(path,data){
   if(data.confirmation!==targets.map(r=>r.full_name).sort().join(','))throw Error('Explicit confirmation required');
   if(data.action==='delete'&&(targets.length!==1||data.typedName!==targets[0].name))throw Error('Type the repository name to delete it');
   if(workspace.mode==='github'&&!authenticated())throw Error('Add a GitHub token in Settings to manage repositories.');
+  const archiveName=typeof data.archiveName==='string'?data.archiveName.trim():'';
+  if(archiveName){
+   if(data.action!=='archive'||targets.length!==1)throw Error('Rename while archiving requires a single repository.');
+   if(!/^(?!\.{1,2}$)[\w.-]{1,100}$/.test(archiveName))throw Error('Use 1–100 letters, numbers, hyphens, underscores, or periods for the repository name.');
+   const target=targets[0];
+   if(workspace.repos.some(r=>r.id!==target.id&&r.owner.login.toLowerCase()===target.owner.login.toLowerCase()&&r.name.toLowerCase()===archiveName.toLowerCase()))throw Error('A repository with that name already exists for this owner.');
+  }
   let completed=0;
   for(const r of targets){
    try{
     const action=data.action;
     if(action==='rename'&&!/^[\w.-]{1,100}$/.test(data.value||''))throw Error('Invalid repository name');
-    const patch=action==='archive'?{archived:true}:action==='unarchive'?{archived:false}:action==='public'?{private:false}:action==='private'?{private:true}:action==='rename'?{name:data.value}:action==='description'?{description:data.value}:{};
+    const patch=action==='archive'?{archived:true,...(archiveName?{name:archiveName}:{})}:action==='unarchive'?{archived:false}:action==='public'?{private:false}:action==='private'?{private:true}:action==='rename'?{name:data.value}:action==='description'?{description:data.value}:{};
     const topics=action==='topics'?String(data.value).split(',').map(s=>s.trim()).filter(Boolean):undefined;
     if(workspace.mode==='github')await github('/repos/'+r.full_name+(action==='topics'?'/topics':''),action==='delete'?'DELETE':action==='topics'?'PUT':'PATCH',action==='delete'?undefined:action==='topics'?{names:topics}:patch,{confirmation:r.full_name,typedName:data.typedName});
     if(action==='delete')workspace.repos=workspace.repos.filter(x=>x.id!==r.id);
     else{
      Object.assign(r,patch);
-     if(action==='rename'){r.full_name=r.owner.login+'/'+r.name;r.html_url='https://github.com/'+r.full_name;}
+     if(action==='rename'||archiveName){r.full_name=r.owner.login+'/'+r.name;r.html_url='https://github.com/'+r.full_name;}
      if(topics)r.topics=topics;
      if(action==='archive'){r.analysis.status='Archived';r.analysis.recommendation='Keep';r.analysis.recommendationReason='Already archived; retain it as a reference.';}
      if(action==='unarchive')r.analysis.status='Paused';

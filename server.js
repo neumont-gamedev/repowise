@@ -67,12 +67,19 @@ http.createServer(async(req,res)=>{
   if(data.confirmation!==targets.map(r=>r.full_name).sort().join(','))throw new Error('Explicit confirmation required');
   if(data.action==='delete' && (targets.length!==1 || data.typedName!==targets[0].name))throw new Error('Type the repository name to delete it');
   if(state.mode==='github'&&!token)throw new Error('Configure GITHUB_TOKEN to manage repositories.');
+  const archiveName=typeof data.archiveName==='string'?data.archiveName.trim():'';
+  if(archiveName){
+   if(data.action!=='archive'||targets.length!==1)throw Error('Rename while archiving requires a single repository.');
+   if(!/^(?!\.{1,2}$)[\w.-]{1,100}$/.test(archiveName))throw Error('Use 1–100 letters, numbers, hyphens, underscores, or periods for the repository name.');
+   const target=targets[0];
+   if(state.repos.some(r=>r.id!==target.id&&r.owner.login.toLowerCase()===target.owner.login.toLowerCase()&&r.name.toLowerCase()===archiveName.toLowerCase()))throw Error('A repository with that name already exists for this owner.');
+  }
   const completed=[];let error;
   for(const r of targets)try {
-   let patch=data.action==='archive'?{archived:true}:data.action==='unarchive'?{archived:false}:data.action==='public'?{private:false}:data.action==='private'?{private:true}:data.action==='rename'?{name:data.value}:data.action==='description'?{description:data.value}:{};
+   let patch=data.action==='archive'?{archived:true,...(archiveName?{name:archiveName}:{})}:data.action==='unarchive'?{archived:false}:data.action==='public'?{private:false}:data.action==='private'?{private:true}:data.action==='rename'?{name:data.value}:data.action==='description'?{description:data.value}:{};
    if(data.action==='rename'&&!/^[\w.-]{1,100}$/.test(data.value||''))throw new Error('Invalid repository name');
    if(state.mode==='github')await github(`/repos/${r.full_name}${data.action==='topics'?'/topics':''}`,data.action==='delete'?'DELETE':data.action==='topics'?'PUT':'PATCH',data.action==='delete'?undefined:data.action==='topics'?{names:String(data.value).split(',').map(s=>s.trim()).filter(Boolean)}:patch);
-   if(data.action==='delete')state.repos=state.repos.filter(x=>x.id!==r.id);else {Object.assign(r,patch);if(data.action==='rename'){r.full_name=`${r.owner.login}/${r.name}`;if(r.html_url)r.html_url=`https://github.com/${r.full_name}`;}if(data.action==='topics')r.topics=String(data.value).split(',').map(s=>s.trim()).filter(Boolean);if(data.action==='archive')r.analysis.status='Archived';if(data.action==='unarchive')r.analysis.status='Paused';}
+   if(data.action==='delete')state.repos=state.repos.filter(x=>x.id!==r.id);else {Object.assign(r,patch);if(data.action==='rename'||archiveName){r.full_name=`${r.owner.login}/${r.name}`;if(r.html_url)r.html_url=`https://github.com/${r.full_name}`;}if(data.action==='topics')r.topics=String(data.value).split(',').map(s=>s.trim()).filter(Boolean);if(data.action==='archive')r.analysis.status='Archived';if(data.action==='unarchive')r.analysis.status='Paused';}
    completed.push(r.full_name);
   }catch(e){error=e.message;break;}
   await save();return json(res,error?400:200,{completed,error,...(!error?{ok:true}:{})});
