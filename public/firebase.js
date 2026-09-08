@@ -1,6 +1,6 @@
 import config from './firebase-config.js';
 let connection;
-async function connect() {
+export async function connect() {
  if(!connection)connection=(async()=>{
   const [app,authSdk,store]=await Promise.all([
    import('https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js'),
@@ -16,7 +16,7 @@ async function connect() {
 export function mountFirebase({state,api,refresh,toast}) {
  const settings=document.querySelector('.settings');if(!settings)return;
  const section=document.createElement('section');
- section.innerHTML='<h2>Firebase cloud workspace</h2><p>Project: <strong>repowise-neumont</strong>. Sign in with Google to back up notes, tags, favorites, and review decisions to your private Firestore workspace.</p><p id="cloud-status" role="status">Not connected</p><div class="management"><button class="button primary" id="cloud-login">Sign in with Google</button><button class="button" id="cloud-upload" disabled>Back up annotations</button><button class="button" id="cloud-restore" disabled>Restore annotations</button><button class="button" id="cloud-logout" disabled>Sign out</button></div><p class="muted">Backups include repository names and annotations. GitHub credentials and source code stay on this computer. Back up again after changes. Demo data cannot be backed up.</p><hr>';
+ section.innerHTML='<h2>Firebase cloud workspace</h2><p>Project: <strong>repowise-neumont</strong>. Sign in with Google to back up notes, tags, favorites, and review decisions to your private Firestore workspace.</p><p id="cloud-status" role="status">Not connected</p><div class="management"><button class="button primary" id="cloud-login">Sign in with Google</button><button class="button" id="cloud-upload" disabled>Back up annotations</button><button class="button" id="cloud-restore" disabled>Restore annotations</button><button class="button" id="cloud-logout" disabled>Sign out</button></div><p class="muted">Backups include repository names and annotations. GitHub tokens are separate from annotation backups. Back up again after changes. Demo data cannot be backed up.</p><hr>';
  settings.prepend(section);
  const message=section.querySelector('#cloud-status'),buttons=[...section.querySelectorAll('button')];
  function paint(c){
@@ -36,7 +36,8 @@ export function mountFirebase({state,api,refresh,toast}) {
    if(button.id==='cloud-login'){
     await c.authSdk.setPersistence(c.auth,c.authSdk.browserSessionPersistence);
     await c.authSdk.signInWithPopup(c.auth,new c.authSdk.GoogleAuthProvider());
-   }else if(button.id==='cloud-logout')await c.authSdk.signOut(c.auth);
+   await refresh();
+   }else if(button.id==='cloud-logout'){await c.authSdk.signOut(c.auth);await refresh();}
    else{
     const uid=c.auth.currentUser?.uid;
     if(!uid)throw Error('Sign in before accessing cloud annotations.');

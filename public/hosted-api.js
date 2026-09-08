@@ -2,30 +2,37 @@ import {analyze} from './analysis.js';
 import {demo} from './demo.js';
 let token='';
 let busy=false;
-const storageKey='repowise.workspace.v1';
+let storageKey='repowise.workspace.v1';
+let savedConnection=false,savedRequest=null,scope=null;
+export function setSavedGithubConnection(connected,request,uid){
+ if(scope!==uid){scope=uid;token='';workspace=undefined;storageKey='repowise.workspace.v1'+(uid?':'+uid:'');}
+ savedConnection=connected;savedRequest=request;
+}
+const authenticated=()=>!!token||savedConnection;
 let workspace;
 function read(){if(!workspace){const raw=localStorage.getItem(storageKey);workspace=raw?JSON.parse(raw):{mode:'demo',account:'Demo workspace',repos:demo()};}return workspace;}
 function save(){localStorage.setItem(storageKey,JSON.stringify(workspace));}
 export function setGithubToken(value){token=value.trim();}
-async function github(path,method='GET',body){
+async function github(path,method='GET',body,confirmation){
+ if(!token&&savedConnection)return savedRequest(path,method,body,confirmation);
  const response=await fetch('https://api.github.com'+path,{method,headers:{Accept:'application/vnd.github+json',...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(30000)});
  if(!response.ok){const error=await response.json();throw Error('GitHub '+response.status+': '+error.message);}
  return response.status===204?{}:response.json();
 }
 export async function hostedApi(path,data){
  read();
- if(path==='state')return structuredClone({...workspace,connected:!!token});
+ if(path==='state')return structuredClone({...workspace,connected:authenticated()});
  if(busy)throw Error('Another operation is in progress. Please wait.');
  busy=true;
  try{
  if(path==='sync'){
-  if(!token&&!/^[a-zA-Z0-9-]{1,39}$/.test(data.username||''))throw Error('Enter a valid GitHub username.');
-  const account=token?(await github('/user')).login:data.username;
+  if(!authenticated()&&!/^[a-zA-Z0-9-]{1,39}$/.test(data.username||''))throw Error('Enter a valid GitHub username.');
+  const account=authenticated()?(await github('/user')).login:data.username;
   let repos=[];
-  for(let page=1;;page++){const batch=await github(token?'/user/repos?per_page=100&sort=pushed&visibility=all&affiliation=owner,collaborator,organization_member&page='+page:'/users/'+account+'/repos?per_page=100&sort=pushed&page='+page);repos.push(...batch);if(batch.length<100)break;}
+  for(let page=1;;page++){const batch=await github(authenticated()?'/user/repos?per_page=100&sort=pushed&visibility=all&affiliation=owner,collaborator,organization_member&page='+page:'/users/'+account+'/repos?per_page=100&sort=pushed&page='+page);repos.push(...batch);if(batch.length<100)break;}
   const prior=new Map(workspace.mode==='github'?workspace.repos.map(r=>[r.id,r]):[]);
   repos=repos.map(r=>({...r,analysis:prior.get(r.id)?.pushed_at===r.pushed_at?prior.get(r.id).analysis:analyze(r),local:prior.get(r.id)?.local||{tags:[],notes:'',review:'Unreviewed',favorite:false}}));
-  workspace={mode:'github',account,repos,syncedAt:new Date().toISOString(),syncInfo:{authenticated:!!token,privateCount:repos.filter(r=>r.private).length,total:repos.length}};
+  workspace={mode:'github',account,repos,syncedAt:new Date().toISOString(),syncInfo:{authenticated:authenticated(),privateCount:repos.filter(r=>r.private).length,total:repos.length}};
  }else if(path==='demo'){workspace={mode:'demo',account:'Demo workspace',repos:demo()};}
  else if(path==='local'){
   const r=workspace.repos.find(r=>r.id===data.id);if(!r)throw Error('Repository not found');
@@ -53,7 +60,7 @@ export async function hostedApi(path,data){
   if(!targets.length||targets.length!==data.ids.length)throw Error('Invalid selection');
   if(data.confirmation!==targets.map(r=>r.full_name).sort().join(','))throw Error('Explicit confirmation required');
   if(data.action==='delete'&&(targets.length!==1||data.typedName!==targets[0].name))throw Error('Type the repository name to delete it');
-  if(workspace.mode==='github'&&!token)throw Error('Add a GitHub token in Settings to manage repositories.');
+  if(workspace.mode==='github'&&!authenticated())throw Error('Add a GitHub token in Settings to manage repositories.');
   let completed=0;
   for(const r of targets){
    try{
@@ -61,7 +68,7 @@ export async function hostedApi(path,data){
     if(action==='rename'&&!/^[\w.-]{1,100}$/.test(data.value||''))throw Error('Invalid repository name');
     const patch=action==='archive'?{archived:true}:action==='unarchive'?{archived:false}:action==='public'?{private:false}:action==='private'?{private:true}:action==='rename'?{name:data.value}:action==='description'?{description:data.value}:{};
     const topics=action==='topics'?String(data.value).split(',').map(s=>s.trim()).filter(Boolean):undefined;
-    if(workspace.mode==='github')await github('/repos/'+r.full_name+(action==='topics'?'/topics':''),action==='delete'?'DELETE':action==='topics'?'PUT':'PATCH',action==='delete'?undefined:action==='topics'?{names:topics}:patch);
+    if(workspace.mode==='github')await github('/repos/'+r.full_name+(action==='topics'?'/topics':''),action==='delete'?'DELETE':action==='topics'?'PUT':'PATCH',action==='delete'?undefined:action==='topics'?{names:topics}:patch,{confirmation:r.full_name,typedName:data.typedName});
     if(action==='delete')workspace.repos=workspace.repos.filter(x=>x.id!==r.id);
     else{
      Object.assign(r,patch);
