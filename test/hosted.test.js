@@ -22,6 +22,21 @@ test('hosted workspace persists annotations and guards management without exposi
   await hostedApi('sync',{username:'example'});
   assert.equal((await hostedApi('state')).repos[0].id,42);
   await assert.rejects(hostedApi('manage',{ids:[42],action:'archive',confirmation:'example/public-project'}),/token/);
- }finally{globalThis.fetch=originalFetch;delete globalThis.localStorage;}
+ 
+  setGithubToken('test-only-private-token');
+  const requests=[];
+  globalThis.fetch=async(url,options)=>{
+   assert.equal(options.headers.Authorization,'Bearer test-only-private-token');requests.push(url);
+   const data=url.endsWith('/user')?{login:'example'}:url.includes('page=2')?[{id:999,name:'private-last-page',private:true,pushed_at:new Date().toISOString()}]:Array.from({length:100},(_,i)=>({id:i+1,name:'repo-'+i,private:i===0,pushed_at:new Date().toISOString()}));
+   return {ok:true,status:200,json:async()=>data};
+  };
+  await hostedApi('sync',{username:'example'});
+  const synced=await hostedApi('state');
+  assert.equal(synced.repos.length,101);
+  assert.equal(synced.syncInfo.privateCount,2);
+  assert.equal(synced.syncInfo.authenticated,true);
+  assert.ok(requests.some(url=>url.includes('visibility=all')&&url.includes('page=2')));
+  assert.ok(!storage.get('repowise.workspace.v1').includes('test-only-private-token'));
+ }finally{setGithubToken('');globalThis.fetch=originalFetch;delete globalThis.localStorage;}
 });
 

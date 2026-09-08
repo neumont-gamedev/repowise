@@ -22,10 +22,10 @@ export async function hostedApi(path,data){
   if(!token&&!/^[a-zA-Z0-9-]{1,39}$/.test(data.username||''))throw Error('Enter a valid GitHub username.');
   const account=token?(await github('/user')).login:data.username;
   let repos=[];
-  for(let page=1;;page++){const batch=await github(token?'/user/repos?per_page=100&sort=pushed&affiliation=owner,collaborator,organization_member&page='+page:'/users/'+account+'/repos?per_page=100&sort=pushed&page='+page);repos.push(...batch);if(batch.length<100)break;}
+  for(let page=1;;page++){const batch=await github(token?'/user/repos?per_page=100&sort=pushed&visibility=all&affiliation=owner,collaborator,organization_member&page='+page:'/users/'+account+'/repos?per_page=100&sort=pushed&page='+page);repos.push(...batch);if(batch.length<100)break;}
   const prior=new Map(workspace.mode==='github'?workspace.repos.map(r=>[r.id,r]):[]);
   repos=repos.map(r=>({...r,analysis:prior.get(r.id)?.pushed_at===r.pushed_at?prior.get(r.id).analysis:analyze(r),local:prior.get(r.id)?.local||{tags:[],notes:'',review:'Unreviewed',favorite:false}}));
-  workspace={mode:'github',account,repos,syncedAt:new Date().toISOString()};
+  workspace={mode:'github',account,repos,syncedAt:new Date().toISOString(),syncInfo:{authenticated:!!token,privateCount:repos.filter(r=>r.private).length,total:repos.length}};
  }else if(path==='demo'){workspace={mode:'demo',account:'Demo workspace',repos:demo()};}
  else if(path==='local'){
   const r=workspace.repos.find(r=>r.id===data.id);if(!r)throw Error('Repository not found');
