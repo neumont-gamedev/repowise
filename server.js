@@ -25,7 +25,7 @@ async function inspect(r) {
  let contents='';
  const targets=files.filter(p=>/(^|\/)(readme.md|package.json|pyproject.toml|requirements.txt|cmakelists.txt)$/i.test(p)).slice(0,5);
  for(const p of targets) {const f=await github(`${base}/contents/${p.split('/').map(encodeURIComponent).join('/')}`);if(f.content && f.size<100000)contents+=Buffer.from(f.content,'base64').toString('utf8').slice(0,12000);}
- r.analysis=analyze(r,files.slice(0,5000),contents);r.analysis.treeTruncated=tree.truncated;
+ r.analysis=analyze(r,files.slice(0,5000),contents);r.analysis.treeTruncated=tree.truncated;r.analysis.fileCount=files.length;
 }
 const json=(res,status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));};
 http.createServer(async(req,res)=>{

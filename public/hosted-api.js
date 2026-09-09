@@ -51,7 +51,7 @@ export async function hostedApi(path,data){
     const file=await github(base+'/contents/'+p.split('/').map(encodeURIComponent).join('/'));
     if(file.content&&file.size<100000)contents+=new TextDecoder().decode(Uint8Array.from(atob(file.content.replace(/\s/g,'')),c=>c.charCodeAt(0))).slice(0,12000);
    }
-   r.analysis=analyze(r,files.slice(0,5000),contents);r.analysis.treeTruncated=tree.truncated;
+   r.analysis=analyze(r,files.slice(0,5000),contents);r.analysis.treeTruncated=tree.truncated;r.analysis.fileCount=files.length;
   }else r.analysis.analyzedAt=new Date().toISOString();
  }else if(path==='manage'){
   const actions=['archive','unarchive','public','private','delete','rename','description','topics'];
