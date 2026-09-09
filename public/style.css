@@ -17,3 +17,5 @@
 .repo-card .repo-metadata{display:grid;grid-template-columns:minmax(0,1fr);row-gap:16px;margin:10px 0 14px}.repo-card .repo-metadata .owner{display:block;margin:0;line-height:1.6}.repo-card .repo-languages{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.repo-card .repo-languages .badge{display:block;line-height:1.4}
 
 .repo-title{display:flex;align-items:center;gap:6px;min-width:0;flex:1}.card-top .repo-title .repo-name{flex:0 1 auto}.repo-title .favorite{margin-left:0;flex-shrink:0;font-size:18px}.github-stars{display:inline-flex;align-items:center;white-space:nowrap;color:#a9afb6}.list .repo-title .favorite{display:inline-block}
+
+.repo-title .repo-select{margin:0 2px 0 0;width:13px;height:13px;flex-shrink:0;accent-color:#b4d2a4;cursor:pointer}.repo-languages .custom-tag{background:#273326;border-color:#43543c;color:#c3dbb5;overflow-wrap:anywhere;max-width:100%}.repo-card .recommendation:last-child{margin-bottom:14px}
