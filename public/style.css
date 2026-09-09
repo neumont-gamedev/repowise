@@ -39,3 +39,5 @@
 .repository-heading-actions{justify-content:flex-end;margin-bottom:16px}.repository-heading-actions>div:empty{display:none}
 
 .page-heading.repository-heading-actions{display:none}
+
+.card-color-green{--card-header:#254d35}.card-color-blue{--card-header:#23476c}.card-color-purple{--card-header:#503567}.card-color-amber{--card-header:#624619}.card-color-red{--card-header:#702f35}.card-color-teal{--card-header:#215456}.repo-card[class*=card-color-]:not(.card-color-default)>.card-top{background:var(--card-header);margin:-14px -14px 0;padding:14px;border-radius:7px 7px 0 0}.repo-card[class*=card-color-]:not(.card-color-default)>.card-top .repo-name{color:#fff}.repo-card[class*=card-color-]:not(.card-color-default)>.card-top .visibility,.repo-card[class*=card-color-]:not(.card-color-default)>.card-top .github-stars,.repo-card[class*=card-color-]:not(.card-color-default)>.card-top .favorite{color:#e8edf0}.repo-card[class*=card-color-]:not(.card-color-default)>.card-top .favorite.on{color:#ffe38c}@media(min-width:1600px){.repo-card[class*=card-color-]:not(.card-color-default)>.card-top{margin:-16px -16px 0;padding:16px}}

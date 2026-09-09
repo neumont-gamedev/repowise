@@ -10,8 +10,9 @@ service cloud.firestore {
     && request.resource.data.fullName is string
     && request.resource.data.fullName.size() < 250
     && request.resource.data.annotations is map
-    && request.resource.data.annotations.keys().hasOnly(['notes', 'tags', 'review', 'favorite', 'status', 'projectType', 'cluster', 'readiness'])
+    && request.resource.data.annotations.keys().hasOnly(['notes', 'tags', 'review', 'favorite', 'status', 'projectType', 'cluster', 'readiness', 'cardColor'])
     && (!('readiness' in request.resource.data.annotations) || (request.resource.data.annotations.readiness is map && request.resource.data.annotations.readiness.keys().hasOnly(['UI', 'Features', 'Testing', 'Release'])))
+    && (!('cardColor' in request.resource.data.annotations) || request.resource.data.annotations.cardColor in ['default','green','blue','purple','amber','red','teal'])
     && request.resource.data.annotations.notes is string
     && request.resource.data.annotations.notes.size() <= 20000
     && request.resource.data.annotations.tags is list
