@@ -8,3 +8,6 @@
 
 /* Compact repository cards with status alongside the name. */
 .repo-card{padding:14px 14px 0}.card-top{align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:0}.card-top .repo-name{min-width:0;flex:1}.card-top .visibility{justify-content:flex-end;flex-shrink:0;gap:5px}.owner{margin:6px 0 9px}.summary{min-height:0;margin:10px 0;-webkit-line-clamp:2}.card-status{margin:12px 0 10px}.recommendation{padding:8px;margin-bottom:10px}.card-footer{padding:9px 0;align-items:center}.card-extras{gap:10px!important}.card-extras .favorite{font-size:18px;margin-left:0}.list .repo-card{display:block;padding:14px}.list .card-top{display:flex;margin-bottom:0}.list .owner{display:block}.list .favorite{display:inline-block}.list .card-footer{display:flex}.list .card-status{margin:12px 0 0}.list .summary{margin:10px 0}.list .card-footer{margin-top:10px}@media(min-width:1600px){.repo-card{padding:16px 16px 0}.list .repo-card{padding:16px}}
+
+/* Reserve full line boxes between repository metadata and language badges. */
+.repo-card>.owner{display:block;line-height:1.6;margin:8px 0 12px;overflow-wrap:anywhere}.repo-card>.techs{position:static;clear:both;align-items:flex-start;margin:0 0 10px;gap:6px}.repo-card>.techs>.badge{display:inline-block;line-height:1.4}.repo-card>.summary{margin-top:0}
