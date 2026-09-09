@@ -1,3 +1,4 @@
+import {normalizeReadiness} from './public/readiness.js';
 import http from 'node:http';
 import {readFile,writeFile,mkdir,rename} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -55,6 +56,7 @@ http.createServer(async(req,res)=>{
   const p=data.patch||{};
   for(const key of ['notes','review','status','projectType','cluster'])if(typeof p[key]==='string' && p[key].length<20000)r.local[key]=p[key];
   if(Array.isArray(p.tags))r.local.tags=p.tags.filter(t=>typeof t==='string').slice(0,30);
+  if(p.readiness&&typeof p.readiness==='object')r.local.readiness=normalizeReadiness(p.readiness);
   if(typeof p.favorite==='boolean')r.local.favorite=p.favorite;
  } else if(url.pathname==='/api/analyze') {
   const r=state.repos.find(r=>r.id===data.id);if(!r)throw new Error('Repository not found');
