@@ -11,3 +11,5 @@
 
 /* Reserve full line boxes between repository metadata and language badges. */
 .repo-card>.owner{display:block;line-height:1.6;margin:8px 0 12px;overflow-wrap:anywhere}.repo-card>.techs{position:static;clear:both;align-items:flex-start;margin:0 0 10px;gap:6px}.repo-card>.techs>.badge{display:inline-block;line-height:1.4}.repo-card>.summary{margin-top:0}
+
+.repo-card>.owner{margin-bottom:0}.repo-card>.techs{padding-top:28px;margin-top:0;margin-bottom:14px}
