@@ -37,3 +37,5 @@
 .page-heading .simple-page-title{font-size:26px;font-weight:700;margin:0;letter-spacing:0}
 
 .repository-heading-actions{justify-content:flex-end;margin-bottom:16px}.repository-heading-actions>div:empty{display:none}
+
+.page-heading.repository-heading-actions{display:none}
