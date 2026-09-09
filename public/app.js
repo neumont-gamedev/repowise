@@ -1,4 +1,4 @@
-import {readinessSummary,readinessEditor,readReadiness,taskRow} from './readiness.js';
+import {readinessSummary,readinessEditor,readReadiness,taskRow} from './readiness.js?v=matrix-1';
 import {initializeSavedConnection} from './saved-connection.js';
 import {HOSTED} from './runtime-config.js';
 import {hostedApi,setGithubToken} from './hosted-api.js';
