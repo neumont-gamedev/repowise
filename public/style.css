@@ -35,3 +35,5 @@
 .workspace.account-workspace{display:block;padding:12px 10px}.workspace-identity{display:flex;align-items:center;gap:9px;margin-bottom:13px}.connection-indicators>div{display:flex;align-items:center;gap:5px;font-size:10px;margin:9px 0}.connection-indicators strong{margin-left:auto;font-size:9px;font-weight:400;color:#aeb6bc;max-width:none}.connection-dot{width:6px;height:6px;background:#6f767d;border-radius:50%;flex-shrink:0}.connection-dot.connected{background:#accf9b}.workspace .connection-note{font-size:9px;line-height:1.5;margin-top:11px}@media(max-width:800px){.workspace.account-workspace{display:none}}
 
 .page-heading .simple-page-title{font-size:26px;font-weight:700;margin:0;letter-spacing:0}
+
+.repository-heading-actions{justify-content:flex-end;margin-bottom:16px}.repository-heading-actions>div:empty{display:none}
