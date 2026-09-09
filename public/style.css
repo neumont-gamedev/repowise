@@ -13,3 +13,5 @@
 .repo-card>.owner{display:block;line-height:1.6;margin:8px 0 12px;overflow-wrap:anywhere}.repo-card>.techs{position:static;clear:both;align-items:flex-start;margin:0 0 10px;gap:6px}.repo-card>.techs>.badge{display:inline-block;line-height:1.4}.repo-card>.summary{margin-top:0}
 
 .repo-card>.owner{margin-bottom:0}.repo-card>.techs{padding-top:28px;margin-top:0;margin-bottom:14px}
+
+.repo-card .repo-metadata{display:grid;grid-template-columns:minmax(0,1fr);row-gap:28px;margin:10px 0 14px}.repo-card .repo-metadata .owner{display:block;margin:0;line-height:1.6}.repo-card .repo-languages{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.repo-card .repo-languages .badge{display:block;line-height:1.4}
