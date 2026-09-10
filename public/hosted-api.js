@@ -81,7 +81,7 @@ export async function hostedApi(path,data){
     if(workspace.mode==='github')await github('/repos/'+r.full_name+(action==='topics'?'/topics':''),action==='delete'?'DELETE':action==='topics'?'PUT':'PATCH',action==='delete'?undefined:action==='topics'?{names:topics}:patch,{confirmation:r.full_name,typedName:data.typedName});
     if(action==='delete')workspace.repos=workspace.repos.filter(x=>x.id!==r.id);
     else{
-     Object.assign(r,patch);
+     Object.assign(r,patch);if(action==='description')r.analysis.summary=r.description||`${r.language||'Software'} project. Inspect its files to establish its purpose.`;
      if(action==='rename'||archiveName){r.full_name=r.owner.login+'/'+r.name;r.html_url='https://github.com/'+r.full_name;}
      if(topics)r.topics=topics;
      if(action==='archive'){r.analysis.status='Archived';r.analysis.recommendation='Keep';r.analysis.recommendationReason='Already archived; retain it as a reference.';}
