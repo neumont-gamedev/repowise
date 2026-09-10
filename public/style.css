@@ -61,3 +61,5 @@ select{color-scheme:dark}select option{background-color:#1b1e20;color:#a9afb6}
 main>.content.repository-content{padding-top:16px}
 
 .card-readiness-row{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;margin:10px 0 14px}.card-readiness-row .readiness-summary{margin:0;min-width:0;line-height:1.5}.card-readiness-row .card-github-link{line-height:1.5}.list .card-readiness-row{margin-bottom:0}
+
+.card-language-row{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}.card-language-row .repo-languages{flex:1;min-width:0}.card-language-row .card-github-link{margin-left:auto;line-height:1.5}
