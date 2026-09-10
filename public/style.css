@@ -63,3 +63,6 @@ main>.content.repository-content{padding-top:16px}
 .card-readiness-row{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;margin:10px 0 14px}.card-readiness-row .readiness-summary{margin:0;min-width:0;line-height:1.5}.card-readiness-row .card-github-link{line-height:1.5}.list .card-readiness-row{margin-bottom:0}
 
 .card-language-row{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}.card-language-row .repo-languages{flex:1;min-width:0}.card-language-row .card-github-link{margin-left:auto;line-height:1.5}
+
+/* Consistent card rows, including cards without custom tags. */
+.repo-card{--card-row-gap:10px}.repo-card .repo-metadata{row-gap:var(--card-row-gap);margin:var(--card-row-gap) 0}.repo-card .card-meta-row{min-height:30px;align-items:center}.repo-card .card-language-row{min-height:28px;align-items:center}.repo-card .repo-metadata .owner{line-height:1.6}.repo-card>.summary{margin:0;line-height:1.8;min-height:3.6em;-webkit-line-clamp:2}.repo-card .card-readiness-row{margin:var(--card-row-gap) 0 14px}.list .repo-card .card-readiness-row{margin-bottom:0}
