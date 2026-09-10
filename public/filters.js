@@ -1,0 +1,1 @@
+export function matchesVisibility(repo,values){const has=value=>values.includes(value);const visibilitySelected=has('public')||has('private');return (!visibilitySelected||(repo.private?has('private'):has('public')))&&(!has('archived')||repo.archived)&&(!has('forks')||repo.fork);}
