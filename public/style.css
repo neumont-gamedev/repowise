@@ -57,3 +57,5 @@ select{color-scheme:dark}select option{background-color:#1b1e20;color:#a9afb6}
 .card-meta-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.repo-card .card-meta-row .owner{flex:1;min-width:0;margin:0}.card-meta-row .card-updated{margin:0;flex-shrink:0;white-space:nowrap}.repo-card>[data-card-header]{cursor:pointer}.repo-card>[data-card-header]:hover{box-shadow:inset 0 0 0 1px #7a8d70}@media(max-width:450px){.card-meta-row{flex-wrap:wrap}.card-meta-row .card-updated{margin-left:auto}}
 
 .sidebar-bottom .nav-item[data-view="Settings"]{border:1px solid #7b857e;background:#222725;border-radius:6px;color:#d5ded5}.sidebar-bottom .nav-item[data-view="Settings"]:hover{border-color:#bedcaf;background:#2b332c}.sidebar-bottom .nav-item[data-view="Settings"].active{border-color:#bedcaf;background:#29332a;color:#c5e3bc}
+
+main>.content.repository-content{padding-top:16px}
